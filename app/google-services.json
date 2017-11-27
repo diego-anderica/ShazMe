@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "467112767727",
+    "firebase_url": "https://shazam-52bf1.firebaseio.com",
+    "project_id": "shazam-52bf1",
+    "storage_bucket": "shazam-52bf1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:467112767727:android:b2a90cde7fb7be28",
+        "android_client_info": {
+          "package_name": "es.uclm.esi.multimedia.shazam"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "467112767727-tp38i1b2hkniihvoc28utkgniib7oem8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "es.uclm.esi.multimedia.shazam",
+            "certificate_hash": "7ca17e001afe6ad0a201abc404226220e81e22fa"
+          }
+        },
+        {
+          "client_id": "467112767727-77r7q5bt184levfdatmp6t9dnphp6la2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDKIP9q4HZClpJeDYNrf_1oAtBY8cRPcLc"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "467112767727-77r7q5bt184levfdatmp6t9dnphp6la2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
