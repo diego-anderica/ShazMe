@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import android.content.Context;
 import android.media.AudioFormat;
 //import android.media.AudioFormat.Builder;
 import android.media.AudioRecord;
@@ -34,10 +36,10 @@ public class AudioRecognizer {
     public boolean running;
 
     // Constructor
-    public AudioRecognizer() {
+    public AudioRecognizer(Context ctx) {
 
         // Deserialize the hash table hashMapSongRepository (our song repository)
-        this.hashMapSongRepository = Serialization.deserializeHashMap();
+        this.hashMapSongRepository = Serialization.deserializeHashMap(ctx);
         this.running = true;
     }
 
@@ -60,6 +62,8 @@ public class AudioRecognizer {
         final TargetDataLine line = (TargetDataLine) AudioSystem.getLine(info);
         line.open(audioFormat);
         line.start();*/
+
+        //TODO Tener en cuenta AudioParams.signed y AudioParams.bigendian
 
         final AudioRecord audiorecorder = new AudioRecord(MediaRecorder.AudioSource.MIC, Math.round(AudioParams.sampleRate), AudioParams.channels, AudioFormat.ENCODING_DEFAULT, AudioParams.bufferSize);
         audiorecorder.startRecording();

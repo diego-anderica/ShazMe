@@ -3,6 +3,7 @@ package es.uclm.esi.multimedia.fingerprinting;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 //import javax.sound.sampled.LineUnavailableException;
+import android.content.Context;
 import android.media.MediaCasException;
 
 /**
@@ -14,7 +15,7 @@ public class AudioFingerprinting {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
+    public static void main(String[] args, Context ctx) {
 
         boolean exit = false;
 
@@ -24,7 +25,7 @@ public class AudioFingerprinting {
                 // If we want to run matching
                 if (args[0].equals("-matching")) {
                     try {
-                        AudioRecognizer fingerPrintingExample = new AudioRecognizer();
+                        AudioRecognizer fingerPrintingExample = new AudioRecognizer(ctx);
                         // For matching we provide an empty string and isMatching=true
                         fingerPrintingExample.listening("", true);
                         exit = true;
@@ -38,7 +39,7 @@ public class AudioFingerprinting {
                 String songId = args[1];
                 if (args[0].equals("-add")) {
                     try {
-                        AudioRecognizer fingerPrintingExample = new AudioRecognizer();
+                        AudioRecognizer fingerPrintingExample = new AudioRecognizer(ctx);
                         // For adding a song we provide a string with its identifier (i.e., title) and isMatching=false
                         fingerPrintingExample.listening(songId, false);
                         exit = true;

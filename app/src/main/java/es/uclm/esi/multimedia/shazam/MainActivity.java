@@ -1,5 +1,6 @@
 package es.uclm.esi.multimedia.shazam;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -13,6 +14,8 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
+import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.common.ConnectionResult;
@@ -20,8 +23,12 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import es.uclm.esi.multimedia.fingerprinting.AudioFingerprinting;
+
 public class MainActivity extends AppCompatActivity implements
         GoogleApiClient.OnConnectionFailedListener{
+
+    private Context ctx = this;
 
     private static final String TAG = "MainActivity";
     public static final String ANONYMOUS = "anonymous";
@@ -33,6 +40,8 @@ public class MainActivity extends AppCompatActivity implements
     private String mPhotoUrl;
     private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mFirebaseUser;
+
+    private Button btnMatching;
 
     private GoogleApiClient mGoogleApiClient;
 
@@ -47,6 +56,8 @@ public class MainActivity extends AppCompatActivity implements
         // Initialize Firebase Auth
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
+
+        btnMatching = findViewById(R.id.btnMatching);
 
         if (mFirebaseUser == null) {
             // Not signed in, launch the Sign In activity
@@ -67,6 +78,18 @@ public class MainActivity extends AppCompatActivity implements
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        btnMatching.setOnClickListener(new View.OnClickListener() {
+
+            String [] cad = {"-matching"};
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(MainActivity.this, "Iniciando la escucha de la canción...", Toast.LENGTH_LONG).show();
+
+                cad[0] = "-matching";
+                AudioFingerprinting.main(cad, getCtx());
+            }
+        });
 
     }
 
@@ -96,6 +119,10 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
         Log.d(TAG, "onConnectionFailed:" + connectionResult);
+    }
+
+    public Context getCtx (){
+        return ctx;
     }
 
 }

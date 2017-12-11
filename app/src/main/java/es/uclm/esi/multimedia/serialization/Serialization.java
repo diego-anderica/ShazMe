@@ -1,17 +1,24 @@
 package es.uclm.esi.multimedia.serialization;
 
-import es.uclm.esi.multimedia.fingerprinting.KeyPoint;
+import android.content.Context;
+import android.content.res.Resources;
+
+import es.uclm.esi.multimedia.fingerprinting.*;
+import es.uclm.esi.multimedia.shazam.R;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 
 /**
  * Created by Ruth on 30/11/2017.
@@ -24,11 +31,11 @@ public class Serialization {
     public static void serializeHashMap(Map<Long, List<KeyPoint>> hashMap) {
 
         try {
-            File f = new File("serialized");
+            File f = new File("res/raw");
             if (!f.exists()) {
                 f.mkdir();
             }
-            f = new File("serialized/hashmap.ser");
+            f = new File("raw/hashmap.ser");
             OutputStream fos = new FileOutputStream(f);
             ObjectOutputStream oos = new ObjectOutputStream(fos);
             oos.writeObject(hashMap);
@@ -39,11 +46,11 @@ public class Serialization {
         }
     }
 
-    public static Map<Long, List<KeyPoint>>  deserializeHashMap() {
+    public static Map<Long, List<KeyPoint>>  deserializeHashMap(Context ctx) {
 
         Map<Long, List<KeyPoint>> hashMap =  new HashMap<Long, List<KeyPoint>>();
         try {
-            FileInputStream fis = new FileInputStream("serialized/hashmap.ser");
+            InputStream fis = ctx.getResources().openRawResource (R.raw.hashmap);
             ObjectInputStream ois = new ObjectInputStream(fis);
             hashMap = (Map<Long, List<KeyPoint>>) ois.readObject();
             ois.close();
