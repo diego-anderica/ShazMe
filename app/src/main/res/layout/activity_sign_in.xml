@@ -1,18 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/sign_in_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
-    android:orientation="vertical"
     android:background="@drawable/drawable_gradient_animation_list">
+
+    <ImageView
+        android:id="@+id/imgLogo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/lblSignIn"
+        android:layout_alignParentTop="true"
+        android:layout_marginEnd="52dp"
+        android:layout_marginTop="32dp"
+        android:contentDescription="@string/lblAppLogo"
+        android:gravity="center"
+        app:srcCompat="@drawable/shazme_logo_white" />
 
     <TextView
         android:id="@+id/lblSignIn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/imgLogo"
+        android:layout_centerHorizontal="true"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="32dp"
         android:text="@string/lblSignIn"
         android:textColor="@color/common_google_signin_btn_text_dark_default"
         android:textSize="24sp"
@@ -22,8 +35,10 @@
         android:id="@+id/sign_in_button"
         android:layout_width="166dp"
         android:layout_height="79dp"
-        android:layout_centerInParent="true"
+        android:layout_below="@+id/lblSignIn"
+        android:layout_centerHorizontal="true"
         android:layout_gravity="center"
+        android:layout_marginTop="60dp"
         android:visibility="visible" />
 
-</FrameLayout>
+</RelativeLayout>

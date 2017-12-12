@@ -41,9 +41,10 @@ public class MainActivity extends AppCompatActivity implements
     private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mFirebaseUser;
 
-    private Button btnMatching;
-
     private GoogleApiClient mGoogleApiClient;
+
+    private Button btnMatching;
+    private Button btnAddCancion;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +59,7 @@ public class MainActivity extends AppCompatActivity implements
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
 
         btnMatching = findViewById(R.id.btnMatching);
+        btnAddCancion = findViewById(R.id.btnAddCancion);
 
         if (mFirebaseUser == null) {
             // Not signed in, launch the Sign In activity
@@ -80,13 +82,19 @@ public class MainActivity extends AppCompatActivity implements
         setSupportActionBar(toolbar);
 
         btnMatching.setOnClickListener(new View.OnClickListener() {
-
             String [] cad = {"-matching"};
             @Override
             public void onClick(View v) {
-                Toast.makeText(MainActivity.this, "Iniciando la escucha de la canción...", Toast.LENGTH_LONG).show();
+                Toast.makeText(MainActivity.this, "Escuchando canción...", Toast.LENGTH_LONG).show();
+                AudioFingerprinting.main(cad, getCtx());
+            }
+        });
 
-                cad[0] = "-matching";
+        btnAddCancion.setOnClickListener(new View.OnClickListener() {
+            String [] cad = {"-add", "Nueva_cancion"};
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(MainActivity.this, "Escuchando nueva canción...", Toast.LENGTH_LONG).show();
                 AudioFingerprinting.main(cad, getCtx());
             }
         });

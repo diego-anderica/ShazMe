@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
@@ -33,7 +34,7 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
         View.OnClickListener {
 
     private AnimationDrawable animationDrawable;
-    private FrameLayout frameLayout;
+    private RelativeLayout frameLayout;
 
     private static final String TAG = "SignInActivity";
     private static final int RC_SIGN_IN = 9001;
@@ -50,7 +51,7 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
         getSupportActionBar().hide();
 
         // init constraintLayout
-        frameLayout = (FrameLayout) findViewById(R.id.sign_in_layout);
+        frameLayout = (RelativeLayout) findViewById(R.id.sign_in_layout);
 
         // initializing animation drawable by getting background from constraint layout
         animationDrawable = (AnimationDrawable) frameLayout.getBackground();
@@ -87,7 +88,7 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
         if (authResult != null) {
             // Welcome the user
             FirebaseUser user = authResult.getUser();
-            Toast.makeText(this, "Welcome " + user.getEmail(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Benvenido/a, " + user.getEmail(), Toast.LENGTH_SHORT).show();
 
             // Go back to the main activity
             startActivity(new Intent(this, MainActivity.class));
