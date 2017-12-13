@@ -1,5 +1,5 @@
 # ShazMe!
-Android application implemented in Java using Shazam-like algorithm. This project is part of a univertity subject.
+Android application implemented in Java using Shazam-like algorithm. This project is part of a university subject.
 
 ## Programming Language
 Java.
