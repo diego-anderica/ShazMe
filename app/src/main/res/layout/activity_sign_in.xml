@@ -12,8 +12,10 @@
         android:layout_height="wrap_content"
         android:layout_alignEnd="@+id/lblSignIn"
         android:layout_alignParentTop="true"
-        android:layout_marginEnd="52dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginEnd="48dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginLeft="20dp"
         android:contentDescription="@string/lblAppLogo"
         android:gravity="center"
         app:srcCompat="@drawable/shazme_logo_white" />
@@ -25,20 +27,108 @@
         android:layout_below="@+id/imgLogo"
         android:layout_centerHorizontal="true"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="32dp"
         android:text="@string/lblSignIn"
         android:textColor="@color/common_google_signin_btn_text_dark_default"
         android:textSize="24sp"
         android:textStyle="bold" />
 
+    <TextView
+        android:id="@+id/lblEmail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/txtEmail"
+        android:layout_alignBottom="@+id/txtEmail"
+        android:layout_toStartOf="@+id/imgLogo"
+        android:text="@string/lblEmail"
+        android:textAlignment="center"
+        android:textColor="@android:color/white"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/txtEmail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/lblSignIn"
+        android:layout_alignStart="@+id/sign_in_button"
+        android:layout_below="@+id/lblSignIn"
+        android:layout_marginTop="51dp"
+        android:ems="10"
+        android:hint="ejemplo@ejemplo.com"
+        android:inputType="textEmailAddress"
+        android:textColor="@android:color/white"
+        android:textColorHint="#FFFFFF" />
+
+    <TextView
+        android:id="@+id/lblContrasena"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/txtEmail"
+        android:layout_marginTop="10dp"
+        android:layout_toStartOf="@+id/imgLogo"
+        android:text="@string/lblContrasena"
+        android:textColor="@android:color/white"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/txtContrasena"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/lblContrasena"
+        android:layout_alignBottom="@+id/lblContrasena"
+        android:layout_alignEnd="@+id/txtEmail"
+        android:layout_alignStart="@+id/txtEmail"
+        android:ems="10"
+        android:inputType="textPassword"
+        android:textColor="@android:color/white"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/lblHeOlvidadoContrasena"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/btnEntrar"
+        android:layout_below="@+id/txtContrasena"
+        android:layout_marginTop="16dp"
+        android:text="@string/lblHeOlvidadoContrasena"
+        android:textColor="@android:color/white"
+        android:textSize="18sp" />
+
+    <Button
+        android:id="@+id/btnEntrar"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/lblHeOlvidadoContrasena"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="44dp"
+        android:background="@color/colorBtnEntrar"
+        android:elevation="0dp"
+        android:text="@string/btnEntrar"
+        android:textColor="@android:color/black" />
+
+    <TextView
+        android:id="@+id/lblLoginAlternativo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/lblEmail"
+        android:layout_below="@+id/btnEntrar"
+        android:layout_marginTop="23dp"
+        android:text="@string/lblLoginAlternativo"
+        android:textAlignment="center"
+        android:textColor="@android:color/white"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
     <com.google.android.gms.common.SignInButton
         android:id="@+id/sign_in_button"
         android:layout_width="166dp"
-        android:layout_height="79dp"
-        android:layout_below="@+id/lblSignIn"
+        android:layout_height="50dp"
+        android:layout_below="@+id/lblLoginAlternativo"
         android:layout_centerHorizontal="true"
         android:layout_gravity="center"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="8dp"
         android:visibility="visible" />
 
 </RelativeLayout>

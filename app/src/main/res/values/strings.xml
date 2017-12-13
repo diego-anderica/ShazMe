@@ -1,9 +1,14 @@
 <resources>
     <string name="app_name">ShazMe!</string>
     <string name="action_settings">Settings</string>
-    <string name="lblSignIn">Entra con tu cuenta de Google</string>
+    <string name="lblSignIn">Entra a tu cuenta de ShazMe!</string>
     <string name="mnuBtnSignOut">Salir</string>
     <string name="txtMatching">Hacer match</string>
     <string name="btnAddCancion">Añadir Canción</string>
     <string name="lblAppLogo">App Logo</string>
+    <string name="lblEmail">Email</string>
+    <string name="lblContrasena">Contraseña</string>
+    <string name="lblLoginAlternativo">O entra con tu cuenta de Google</string>
+    <string name="btnEntrar">Entrar</string>
+    <string name="lblHeOlvidadoContrasena">He olvidado mi contraseña...</string>
 </resources>
