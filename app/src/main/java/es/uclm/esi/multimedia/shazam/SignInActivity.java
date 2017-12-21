@@ -32,7 +32,7 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
         View.OnClickListener {
 
     private AnimationDrawable animationDrawable;
-    private RelativeLayout frameLayout;
+    private RelativeLayout relativeLayout;
 
     private static final String TAG = "SignInActivity";
     private static final int RC_SIGN_IN = 9001;
@@ -44,7 +44,7 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
     private EditText txtEmail;
     private EditText txtContrasena;
     private Button btnEntrar;
-    private TextView etContrasenaOlvidada;
+    private TextView txtContrasenaOlvidada;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,13 +54,13 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
         getSupportActionBar().hide();
 
         // init constraintLayout
-        frameLayout = (RelativeLayout) findViewById(R.id.sign_in_layout);
+        relativeLayout = (RelativeLayout) findViewById(R.id.sign_in_layout);
 
         // initializing animation drawable by getting background from constraint layout
-        animationDrawable = (AnimationDrawable) frameLayout.getBackground();
+        animationDrawable = (AnimationDrawable) relativeLayout.getBackground();
 
         // initializing animation drawable by getting background from constraint layout
-        animationDrawable = (AnimationDrawable) frameLayout.getBackground();
+        animationDrawable = (AnimationDrawable) relativeLayout.getBackground();
 
         // setting enter fade animation duration to 5 seconds
         animationDrawable.setEnterFadeDuration(2000);
@@ -88,11 +88,32 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
 
         txtEmail = (EditText) findViewById(R.id.txtEmail);
         txtContrasena = (EditText) findViewById(R.id.txtContrasena);
-        etContrasenaOlvidada = (TextView) findViewById(R.id.lblHeOlvidadoContrasena);
-        etContrasenaOlvidada.setOnClickListener(new View.OnClickListener() {
+        txtContrasenaOlvidada = (TextView) findViewById(R.id.lblHeOlvidadoContrasena);
+        txtContrasenaOlvidada.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(SignInActivity.this, "¡Arreglémoslo!", Toast.LENGTH_LONG).show();
+                if (txtEmail.getText().toString() == ""){
+                    Toast.makeText(SignInActivity.this, "Escribe una dirección de correo en el campo", Toast.LENGTH_LONG).show();
+                } else {
+                    if (txtEmail.getText().toString().indexOf('@') < 0){
+                        Toast.makeText(SignInActivity.this, "Dirección de correo no válida", Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(SignInActivity.this, "¡Arreglémoslo!", Toast.LENGTH_LONG).show();
+                        mFirebaseAuth.sendPasswordResetEmail(txtEmail.getText().toString())
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (task.isSuccessful()) {
+                                            Toast.makeText(SignInActivity.this, "Te hemos enviado un correo a tu buzón", Toast.LENGTH_LONG).show();
+                                        } else {
+                                            Toast.makeText(SignInActivity.this, "El correo no pudo ser enviado", Toast.LENGTH_LONG).show();
+                                        }
+                                    }
+                                });
+                    }
+
+                }
+
             }
         });
 

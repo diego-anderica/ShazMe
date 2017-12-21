@@ -5,16 +5,14 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
@@ -23,10 +21,8 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-import es.uclm.esi.multimedia.fingerprinting.AudioFingerprinting;
-
 public class MainActivity extends AppCompatActivity implements
-        GoogleApiClient.OnConnectionFailedListener{
+        GoogleApiClient.OnConnectionFailedListener {
 
     private Context ctx = this;
 
@@ -43,8 +39,9 @@ public class MainActivity extends AppCompatActivity implements
 
     private GoogleApiClient mGoogleApiClient;
 
-    private Button btnMatching;
+    private Button btnMatchingNormal;
     private Button btnAddCancion;
+    private ImageButton btnMatching;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,8 +55,9 @@ public class MainActivity extends AppCompatActivity implements
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
 
-        btnMatching = findViewById(R.id.btnMatching);
+        btnMatchingNormal = findViewById(R.id.btnMatchingNormal);
         btnAddCancion = findViewById(R.id.btnAddCancion);
+        btnMatching = findViewById(R.id.btnMatching);
 
         if (mFirebaseUser == null) {
             // Not signed in, launch the Sign In activity
@@ -82,20 +80,22 @@ public class MainActivity extends AppCompatActivity implements
         setSupportActionBar(toolbar);
 
         btnMatching.setOnClickListener(new View.OnClickListener() {
-            String [] cad = {"-matching"};
+            String[] cad = {"-matching"};
+
             @Override
             public void onClick(View v) {
                 Toast.makeText(MainActivity.this, "Escuchando canción...", Toast.LENGTH_LONG).show();
-                AudioFingerprinting.main(cad, getCtx());
+                //AudioFingerprinting.main(cad, getCtx());
             }
         });
 
         btnAddCancion.setOnClickListener(new View.OnClickListener() {
-            String [] cad = {"-add", "Nueva_cancion"};
+            String[] cad = {"-add", "Nueva_cancion"};
+
             @Override
             public void onClick(View v) {
                 Toast.makeText(MainActivity.this, "Escuchando nueva canción...", Toast.LENGTH_LONG).show();
-                AudioFingerprinting.main(cad, getCtx());
+                //AudioFingerprinting.main(cad, getCtx());
             }
         });
 
@@ -129,7 +129,7 @@ public class MainActivity extends AppCompatActivity implements
         Log.d(TAG, "onConnectionFailed:" + connectionResult);
     }
 
-    public Context getCtx (){
+    public Context getCtx() {
         return ctx;
     }
 
