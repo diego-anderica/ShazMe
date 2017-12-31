@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity implements
     private ImageButton btnMatching;
 
     // Access a Cloud Firestore instance from the Activity
-    private FirebaseFirestore db;
+    private FirebaseFirestore mFirestore;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +61,8 @@ public class MainActivity extends AppCompatActivity implements
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
 
-        db = FirebaseFirestore.getInstance();
+        // Initialize Firestore and the main RecyclerView
+        initFirestore();
 
         btnMatchingNormal = findViewById(R.id.btnMatchingNormal);
         btnAddCancion = findViewById(R.id.btnAddCancion);
@@ -93,7 +94,7 @@ public class MainActivity extends AppCompatActivity implements
             @Override
             public void onClick(View v) {
                 Toast.makeText(MainActivity.this, "Escuchando canción...", Toast.LENGTH_LONG).show();
-                AudioFingerprinting.main(cad, getCtx(), db);
+                AudioFingerprinting.main(cad, getCtx(), mFirestore);
             }
         });
 
@@ -107,6 +108,10 @@ public class MainActivity extends AppCompatActivity implements
             }
         });
 
+    }
+
+    private void initFirestore() {
+        mFirestore = FirebaseFirestore.getInstance();
     }
 
     @Override
