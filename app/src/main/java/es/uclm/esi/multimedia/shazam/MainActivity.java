@@ -20,6 +20,9 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import es.uclm.esi.multimedia.fingerprinting.AudioFingerprinting;
 
 public class MainActivity extends AppCompatActivity implements
         GoogleApiClient.OnConnectionFailedListener {
@@ -43,6 +46,9 @@ public class MainActivity extends AppCompatActivity implements
     private Button btnAddCancion;
     private ImageButton btnMatching;
 
+    // Access a Cloud Firestore instance from the Activity
+    private FirebaseFirestore db;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,6 +60,8 @@ public class MainActivity extends AppCompatActivity implements
         // Initialize Firebase Auth
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
+
+        db = FirebaseFirestore.getInstance();
 
         btnMatchingNormal = findViewById(R.id.btnMatchingNormal);
         btnAddCancion = findViewById(R.id.btnAddCancion);
@@ -85,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements
             @Override
             public void onClick(View v) {
                 Toast.makeText(MainActivity.this, "Escuchando canción...", Toast.LENGTH_LONG).show();
-                //AudioFingerprinting.main(cad, getCtx());
+                AudioFingerprinting.main(cad, getCtx(), db);
             }
         });
 

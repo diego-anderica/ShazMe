@@ -23,6 +23,8 @@ import android.media.MediaCasException;
 import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.TargetDataLine;*/
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import es.uclm.esi.multimedia.utilities.HashingFunctions;
 import es.uclm.esi.multimedia.utilities.Spectrum;
 
@@ -36,10 +38,10 @@ public class AudioRecognizer {
     public boolean running;
 
     // Constructor
-    public AudioRecognizer(Context ctx) {
+    public AudioRecognizer(Context ctx, FirebaseFirestore db) {
 
         // Deserialize the hash table hashMapSongRepository (our song repository)
-        this.hashMapSongRepository = Serialization.deserializeHashMap(ctx);
+        this.hashMapSongRepository = Serialization.deserializeHashMap(ctx, db);
         this.running = true;
     }
 
