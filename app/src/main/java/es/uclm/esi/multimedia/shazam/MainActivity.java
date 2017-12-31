@@ -61,6 +61,9 @@ public class MainActivity extends AppCompatActivity implements
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
 
+        // Enable Firestore logging
+        FirebaseFirestore.setLoggingEnabled(true);
+
         // Initialize Firestore and the main RecyclerView
         initFirestore();
 
@@ -104,7 +107,7 @@ public class MainActivity extends AppCompatActivity implements
             @Override
             public void onClick(View v) {
                 Toast.makeText(MainActivity.this, "Escuchando nueva canción...", Toast.LENGTH_LONG).show();
-                //AudioFingerprinting.main(cad, getCtx());
+                AudioFingerprinting.main(cad, getCtx(), mFirestore);
             }
         });
 

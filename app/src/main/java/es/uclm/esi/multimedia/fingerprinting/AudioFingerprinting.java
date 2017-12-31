@@ -26,14 +26,10 @@ public class AudioFingerprinting {
             case 1:
                 // If we want to run matching
                 if (args[0].equals("-matching")) {
-                    try {
-                        AudioRecognizer fingerPrintingExample = new AudioRecognizer(ctx, db);
-                        // For matching we provide an empty string and isMatching=true
-                        fingerPrintingExample.listening("", true);
-                        exit = true;
-                    } catch (MediaCasException ex) {
-                        Logger.getLogger(AudioFingerprinting.class.getName()).log(Level.SEVERE, null, ex);
-                    }
+                    AudioRecognizer fingerPrintingExample = new AudioRecognizer(ctx, db);
+                    // For matching we provide an empty string and isMatching=true
+                    //fingerPrintingExample.listening("", true);
+                    exit = true;
                 }
                 break;
             case 2:

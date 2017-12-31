@@ -37,12 +37,15 @@ public class AudioRecognizer {
     // Variable to stop/start the listening loop
     public boolean running;
 
+    private FirebaseFirestore db;
+
     // Constructor
     public AudioRecognizer(Context ctx, FirebaseFirestore db) {
 
         // Deserialize the hash table hashMapSongRepository (our song repository)
-        this.hashMapSongRepository = Serialization.deserializeHashMap(ctx, db);
+        this.hashMapSongRepository = Serialization.retrieveDatabase(ctx, db);
         this.running = true;
+        this.db = db;
     }
 
     // Method used to acquire audio from the microphone and to add/match a song fragment
@@ -101,7 +104,7 @@ public class AudioRecognizer {
                     outStream.close();
 
                     // Serialize again the hashMapSongRepository (our song repository)
-                    Serialization.serializeHashMap(hashMapSongRepository);
+                    Serialization.storeNewSong(hashMapSongRepository, db);
                 } catch (IOException e) {
                     System.err.println("I/O exception " + e);
                     System.exit(-1);
@@ -114,8 +117,8 @@ public class AudioRecognizer {
 
         System.out.println("Press ENTER key to stop listening...");
         try {
-            System.in.read();
-        } catch (IOException ex) {
+            Thread.sleep(5000);
+        } catch (Exception ex) {
             Logger.getLogger(AudioRecognizer.class.getName()).log(Level.SEVERE, null, ex);
         }
         this.running = false;
