@@ -69,8 +69,9 @@ public class AudioRecognizer {
         line.start();*/
 
         //TODO Tener en cuenta AudioParams.signed y AudioParams.bigendian
+        // ENCODING_PCM_16BIT: 8 bit signed and big endian.
 
-        final AudioRecord audiorecorder = new AudioRecord(MediaRecorder.AudioSource.MIC, Math.round(AudioParams.sampleRate), AudioParams.channels, AudioFormat.ENCODING_DEFAULT, AudioParams.bufferSize);
+        final AudioRecord audiorecorder = new AudioRecord(MediaRecorder.AudioSource.MIC, AudioParams.sampleRate, AudioParams.channels, AudioFormat.ENCODING_PCM_8BIT, AudioParams.bufferSize);
         audiorecorder.startRecording();
 
         Thread listeningThread = new Thread(new Runnable() {

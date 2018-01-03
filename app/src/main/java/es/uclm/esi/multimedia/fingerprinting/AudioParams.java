@@ -7,7 +7,7 @@ package es.uclm.esi.multimedia.fingerprinting;
 public class AudioParams {
 
     // Sampling
-    public static final float sampleRate = 44100;
+    public static final int sampleRate = 44100;
     public static final int sampleSizeInBits = 8;
     public static final int channels = 1; // Mono
     public static final boolean signed = true;

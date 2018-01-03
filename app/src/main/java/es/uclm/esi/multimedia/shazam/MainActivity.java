@@ -1,8 +1,11 @@
 package es.uclm.esi.multimedia.shazam;
 
+import android.*;
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
@@ -14,6 +17,8 @@ import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Toast;
+import android.support.v4.app.ActivityCompat;
+import android.support.annotation.NonNull;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.common.ConnectionResult;
@@ -25,7 +30,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import es.uclm.esi.multimedia.fingerprinting.AudioFingerprinting;
 
 public class MainActivity extends AppCompatActivity implements
-        GoogleApiClient.OnConnectionFailedListener {
+        GoogleApiClient.OnConnectionFailedListener, ActivityCompat.OnRequestPermissionsResultCallback{
 
     private Context ctx = this;
 
@@ -106,12 +111,37 @@ public class MainActivity extends AppCompatActivity implements
 
             @Override
             public void onClick(View v) {
-                Toast.makeText(MainActivity.this, "Escuchando nueva canción...", Toast.LENGTH_LONG).show();
-                AudioFingerprinting.main(cad, getCtx(), mFirestore);
+                if (ActivityCompat.checkSelfPermission(getCtx(), Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(MainActivity.this, "Escuchando nueva canción...", Toast.LENGTH_LONG).show();
+                    AudioFingerprinting.main(cad, getCtx(), mFirestore);
+                } else {
+                    requestCameraPermission();
+                }
             }
         });
 
     }
+
+    public void requestCameraPermission(){
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO}, 0);
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        // El código 0 significa el permiso de grabar audio.
+        if (requestCode == 0) {
+            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(MainActivity.this, "Los permisos para grabar se han concedido.", Toast.LENGTH_LONG).show();
+            }else{
+                Toast.makeText(MainActivity.this, "Los permisos para grabar NO se han concedido.", Toast.LENGTH_LONG).show();
+            }
+        } else {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
+
 
     private void initFirestore() {
         mFirestore = FirebaseFirestore.getInstance();
