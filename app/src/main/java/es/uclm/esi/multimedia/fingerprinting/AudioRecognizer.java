@@ -24,6 +24,7 @@ import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.TargetDataLine;*/
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.StorageReference;
 
 import es.uclm.esi.multimedia.utilities.HashingFunctions;
 import es.uclm.esi.multimedia.utilities.Spectrum;
@@ -40,12 +41,11 @@ public class AudioRecognizer {
     private FirebaseFirestore db;
 
     // Constructor
-    public AudioRecognizer(Context ctx, FirebaseFirestore db) {
+    public AudioRecognizer(StorageReference storageRef) {
 
         // Deserialize the hash table hashMapSongRepository (our song repository)
-        this.hashMapSongRepository = Serialization.retrieveDatabase(ctx, db);
+        this.hashMapSongRepository = Serialization.fillHashMap(storageRef);
         this.running = true;
-        this.db = db;
     }
 
     // Method used to acquire audio from the microphone and to add/match a song fragment
@@ -105,7 +105,7 @@ public class AudioRecognizer {
                     outStream.close();
 
                     // Serialize again the hashMapSongRepository (our song repository)
-                    Serialization.storeNewSong(hashMapSongRepository, db);
+                    Serialization.serializeHashMap(hashMapSongRepository);
                 } catch (IOException e) {
                     System.err.println("I/O exception " + e);
                     System.exit(-1);

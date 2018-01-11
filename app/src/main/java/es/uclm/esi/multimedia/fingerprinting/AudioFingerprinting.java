@@ -7,6 +7,7 @@ import android.content.Context;
 import android.media.MediaCasException;
 
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.StorageReference;
 
 /**
  * Created by Ruth on 30/11/2017.
@@ -17,7 +18,7 @@ public class AudioFingerprinting {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args, Context ctx, FirebaseFirestore db) {
+    public static void main(String[] args, StorageReference storageRef) {
 
         boolean exit = false;
 
@@ -26,9 +27,15 @@ public class AudioFingerprinting {
             case 1:
                 // If we want to run matching
                 if (args[0].equals("-matching")) {
-                    AudioRecognizer fingerPrintingExample = new AudioRecognizer(ctx, db);
+                    AudioRecognizer fingerPrintingExample = new AudioRecognizer(storageRef);
                     // For matching we provide an empty string and isMatching=true
-                    //fingerPrintingExample.listening("", true);
+
+                    try {
+                        fingerPrintingExample.listening("", true);
+                    } catch (MediaCasException e) {
+                        e.printStackTrace();
+                    }
+
                     exit = true;
                 }
                 break;
@@ -37,7 +44,7 @@ public class AudioFingerprinting {
                 String songId = args[1];
                 if (args[0].equals("-add")) {
                     try {
-                        AudioRecognizer fingerPrintingExample = new AudioRecognizer(ctx, db);
+                        AudioRecognizer fingerPrintingExample = new AudioRecognizer(storageRef);
                         // For adding a song we provide a string with its identifier (i.e., title) and isMatching=false
                         fingerPrintingExample.listening(songId, false);
                         exit = true;

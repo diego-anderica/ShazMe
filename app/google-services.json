@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "467112767727-lhr2q37osa5fun6vjpp2l0r599g5al2t.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "es.uclm.esi.multimedia.shazam",
+            "certificate_hash": "69a1863aacd28614ab09cdc3c2dcb2c863db749b"
+          }
+        },
+        {
           "client_id": "467112767727-icq34s89oe58qmpljgjemsvrqmc6vf6g.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

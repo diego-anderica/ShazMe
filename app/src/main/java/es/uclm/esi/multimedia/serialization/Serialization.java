@@ -14,6 +14,8 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FileDownloadTask;
+import com.google.firebase.storage.StorageReference;
 
 import es.uclm.esi.multimedia.fingerprinting.*;
 import es.uclm.esi.multimedia.shazam.R;
@@ -61,50 +63,62 @@ public class Serialization {
         }
     }
 
-    public static Map<Long, List<KeyPoint>>  deserializeHashMap(Context ctx, FirebaseFirestore db) {
+    public static File retrieveFile(StorageReference storageRef) {
+        File localFile = null;
 
-        prueba(db);
-        System.out.println("Llamado");
-
-        Map<Long, List<KeyPoint>> hashMap =  new HashMap<Long, List<KeyPoint>>();
         try {
-            InputStream fis = ctx.getResources().openRawResource (R.raw.hashmap);
+            localFile = File.createTempFile("hashmap", "ser");
+            storageRef.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    return;
+                }
+            });
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("Archivo: " + localFile.getAbsolutePath());
+        return localFile;
+
+    }
+
+    public static Map<Long, List<KeyPoint>> fillHashMap(StorageReference storageRef) {
+        Map<Long, List<KeyPoint>> hashMap = new HashMap<Long, List<KeyPoint>>();
+
+        File cloudFile = retrieveFile(storageRef);
+
+        try {
+            InputStream fis = new FileInputStream(cloudFile.getAbsolutePath());
             ObjectInputStream ois = new ObjectInputStream(fis);
             hashMap = (Map<Long, List<KeyPoint>>) ois.readObject();
             ois.close();
             fis.close();
-        } catch (FileNotFoundException ex) {
-            System.out.println("\"hashmap.ser\" not found");
-        } catch (IOException ex) {
-            System.out.println("Input/output error " + ex);
-        } catch (ClassNotFoundException ex) {
-            System.out.println("Serialization error: class not found " + ex);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
         }
-        return hashMap;
-    }
 
-    public static void prueba (FirebaseFirestore db){
-
-        CollectionReference personas = db.collection("personas");
-        // Create a new user with a first and last name
-        Map<String, Object> user = new HashMap<>();
-        user.put("first", "Ada");
-        user.put("last", "Lovelace");
-        user.put("born", 1815);
-
-        System.out.println("llego");
-
-        // Add a new document with a generated ID
-        personas.add(user);
-    }
-
-    public static Map<Long,List<KeyPoint>> retrieveDatabase(Context ctx, FirebaseFirestore db) {
-        Map<Long, List<KeyPoint>> hashMap =  new HashMap<Long, List<KeyPoint>>();
+        System.out.println("Este es el hashmap " + hashMap);
 
         return hashMap;
     }
 
-    public static void countSongs (FirebaseFirestore db){
+    public static Map<Long, List<KeyPoint>> retrieveDatabase(Context ctx, FirebaseFirestore db) {
+        Map<Long, List<KeyPoint>> hashMap = new HashMap<Long, List<KeyPoint>>();
+
+        return hashMap;
+    }
+
+    public static void countSongs(FirebaseFirestore db) {
         db.collection("Canciones")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -119,25 +133,6 @@ public class Serialization {
                         } else {
                             Log.d(TAG, "Error getting documents: ", task.getException());
                         }
-                    }
-                });
-    }
-
-    public static void storeNewSong(Map<Long, List<KeyPoint>> hashMapSongRepository, FirebaseFirestore db) {
-        Song newSong = new Song (hashMapSongRepository);
-
-        db.collection("Canciones")
-                .add(newSong)
-                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                    @Override
-                    public void onSuccess(DocumentReference documentReference) {
-                        Log.d(TAG, "DocumentSnapshot written with ID: " + documentReference.getId());
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Error adding document", e);
                     }
                 });
     }
