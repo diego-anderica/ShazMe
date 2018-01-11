@@ -16,7 +16,9 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.support.v4.app.ActivityCompat;
 import android.support.annotation.NonNull;
@@ -61,6 +63,13 @@ public class MainActivity extends AppCompatActivity implements
     private Button btnAddCancion;
     private ImageButton btnMatching;
 
+    private TextView lblBienvenida;
+    private TextView lblAniadir;
+    private TextView lblNombre;
+    private TextView lblArtista;
+    private EditText txtNombrecancion;
+    private EditText txtArtista;
+
     // Access a Cloud Firestore instance from the Activity
     private FirebaseFirestore mFirestore;
 
@@ -94,7 +103,6 @@ public class MainActivity extends AppCompatActivity implements
         // Create a storage reference from our app to the serialized file
         storageRef = storage.getReference().child("hashmap.ser");
 
-        btnMatchingNormal = findViewById(R.id.btnMatchingNormal);
         btnAddCancion = findViewById(R.id.btnAddCancion);
         btnMatching = findViewById(R.id.btnMatching);
 
@@ -123,11 +131,15 @@ public class MainActivity extends AppCompatActivity implements
 
             @Override
             public void onClick(View v) {
-                Toast.makeText(MainActivity.this, "Escuchando canción...", Toast.LENGTH_LONG).show();
+                if (ActivityCompat.checkSelfPermission(getCtx(), Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getCtx(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&ActivityCompat.checkSelfPermission(getCtx(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(MainActivity.this, "Escuchando canción...", Toast.LENGTH_LONG).show();
 
-                //descargarRepositorio("matching");
+                    //descargarRepositorio("matching");
 
-                AudioFingerprinting.main(cad, storageRef, getCtx());
+                    AudioFingerprinting.main(cad, storageRef, getCtx());
+                } else {
+                    requestAudioPermission();
+                }
             }
         });
 
@@ -210,7 +222,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     public void requestAudioPermission(){
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO}, 0);
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, 0);
     }
 
     @Override
@@ -218,10 +230,22 @@ public class MainActivity extends AppCompatActivity implements
                                            @NonNull int[] grantResults) {
         // El código 0 significa el permiso de grabar audio.
         if (requestCode == 0) {
-            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(MainActivity.this, "Los permisos para grabar se han concedido.", Toast.LENGTH_LONG).show();
-            }else{
+            } else {
                 Toast.makeText(MainActivity.this, "Los permisos para grabar NO se han concedido.", Toast.LENGTH_LONG).show();
+            }
+        }else if(requestCode == 1) {
+            if (grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(MainActivity.this, "Los permisos para escribir archivos se han concedido.", Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(MainActivity.this, "Los permisos para escribir archivos NO se han concedido.", Toast.LENGTH_LONG).show();
+            }
+        }else if(requestCode == 2){
+            if (grantResults[2] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(MainActivity.this, "Los permisos para leer archivos se han concedido.", Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(MainActivity.this, "Los permisos para leer archivos NO se han concedido.", Toast.LENGTH_LONG).show();
             }
         } else {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);

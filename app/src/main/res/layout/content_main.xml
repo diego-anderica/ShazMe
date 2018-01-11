@@ -9,31 +9,98 @@
     tools:context="es.uclm.esi.multimedia.shazam.MainActivity"
     tools:showIn="@layout/activity_main">
 
-    <ImageButton
-        android:id="@+id/btnMatching"
+    <TextView
+        android:id="@+id/lblBienvenida"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/btnMatchingNormal"
+        android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="48dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/lblBienvenida"
+        android:textColor="@android:color/white"
+        android:textSize="30sp"
+        android:textStyle="bold" />
+
+    <ImageButton
+        android:id="@+id/btnMatching"
+        style="@android:style/Widget.Holo.ImageButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/lblBienvenida"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
         app:srcCompat="@drawable/shazme_logo_white_round" />
 
-    <Button
-        android:id="@+id/btnMatchingNormal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="17dp"
-        android:text="@string/txtMatching" />
-
-    <Button
-        android:id="@+id/btnAddCancion"
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/lblAniadir"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/btnMatching"
-        android:layout_marginTop="96dp"
-        android:text="@string/btnAddCancion" />
+        android:layout_marginTop="9dp"
+        android:text="@string/lblAniadir"
+        android:textAlignment="center"
+        android:textColor="@android:color/white"
+        android:textSize="30sp"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/btnAddCancion"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/lblAniadir"
+        android:layout_marginTop="41dp"
+        android:text="@string/btnAddCancion"
+        android:textAlignment="center"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/lblNombre"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/btnAddCancion"
+        android:layout_marginStart="14dp"
+        android:layout_marginTop="48dp"
+        android:text="@string/lblNombre"
+        android:textColor="@android:color/white"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/lblArtista"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/lblNombre"
+        android:layout_below="@+id/lblNombre"
+        android:layout_marginTop="22dp"
+        android:text="@string/lblArtista"
+        android:textColor="@android:color/white"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/txtNombreCancion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/lblNombre"
+        android:layout_alignBottom="@+id/lblNombre"
+        android:layout_alignParentEnd="true"
+        android:editable="false"
+        android:ems="10"
+        android:textColor="@android:color/white" />
+
+    <EditText
+        android:id="@+id/txtArtista"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/txtNombreCancion"
+        android:layout_below="@+id/txtNombreCancion"
+        android:editable="false"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:textColor="@android:color/white" />
 
 </RelativeLayout>

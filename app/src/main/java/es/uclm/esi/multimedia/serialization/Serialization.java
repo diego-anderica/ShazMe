@@ -66,29 +66,38 @@ public class Serialization {
     }
 
     public static void downloadFile(StorageReference storageRef, Context ctx) {
-        File fileNameOnDevice = new File(ctx.getExternalFilesDir(null) + "/" + "hashmap.ser");
+        for (int i = 0; i < 1; i++){
+            File fileNameOnDevice = new File(ctx.getExternalFilesDir(null) + "/" + "hashmap.ser");
 
-        storageRef.getFile(fileNameOnDevice).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                return;
-            }
-        });
+            storageRef.getFile(fileNameOnDevice).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
 
-        System.out.println("Archivo: " + fileNameOnDevice.getAbsolutePath());
-        //return fileNameOnDevice;
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    return;
+                }
+            });
 
+
+            System.out.println("Archivo: " + fileNameOnDevice.getAbsolutePath());
+            //return fileNameOnDevice;
+        }
     }
 
     public static Map<Long, List<KeyPoint>> fillHashMap(StorageReference storageRef, Context ctx) {
         Map<Long, List<KeyPoint>> hashMap = new HashMap<Long, List<KeyPoint>>();
 
         downloadFile(storageRef, ctx);
-        File readFile = new File(ctx.getExternalFilesDir(null), "hashmap.ser");
+
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         String location = ctx.getExternalFilesDir(null) + "/" + "hashmap.ser";
 
         FileInputStream fis = null;
@@ -101,9 +110,10 @@ public class Serialization {
             try {
                 while (true) {
                     hashMap = (Map<Long, List<KeyPoint>>) ois.readObject();
+                    System.out.println("Este es el hashmap " + hashMap.toString());
                 }
             } catch (EOFException eof) {
-                //EOF reached, do nothing
+                System.out.println("End of file exception");
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -129,33 +139,8 @@ public class Serialization {
             }
         }
 
-        System.out.println("Este es el hashmap " + hashMap);
+        //System.out.println("Este es el hashmap " + hashMap.toString());
 
         return hashMap;
-    }
-
-    public static Map<Long, List<KeyPoint>> retrieveDatabase(Context ctx, FirebaseFirestore db) {
-        Map<Long, List<KeyPoint>> hashMap = new HashMap<Long, List<KeyPoint>>();
-
-        return hashMap;
-    }
-
-    public static void countSongs(FirebaseFirestore db) {
-        db.collection("Canciones")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            int count = 0;
-                            for (DocumentSnapshot document : task.getResult()) {
-                                count++;
-                            }
-                            System.out.println("Contador: " + count);
-                        } else {
-                            Log.d(TAG, "Error getting documents: ", task.getException());
-                        }
-                    }
-                });
     }
 }
