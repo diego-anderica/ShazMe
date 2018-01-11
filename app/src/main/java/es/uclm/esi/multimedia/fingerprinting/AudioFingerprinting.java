@@ -18,7 +18,7 @@ public class AudioFingerprinting {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args, StorageReference storageRef) {
+    public static void main(String[] args, StorageReference storageRef, Context ctx) {
 
         boolean exit = false;
 
@@ -27,7 +27,7 @@ public class AudioFingerprinting {
             case 1:
                 // If we want to run matching
                 if (args[0].equals("-matching")) {
-                    AudioRecognizer fingerPrintingExample = new AudioRecognizer(storageRef);
+                    AudioRecognizer fingerPrintingExample = new AudioRecognizer(storageRef, ctx);
                     // For matching we provide an empty string and isMatching=true
 
                     try {
@@ -44,7 +44,7 @@ public class AudioFingerprinting {
                 String songId = args[1];
                 if (args[0].equals("-add")) {
                     try {
-                        AudioRecognizer fingerPrintingExample = new AudioRecognizer(storageRef);
+                        AudioRecognizer fingerPrintingExample = new AudioRecognizer(storageRef, ctx);
                         // For adding a song we provide a string with its identifier (i.e., title) and isMatching=false
                         fingerPrintingExample.listening(songId, false);
                         exit = true;

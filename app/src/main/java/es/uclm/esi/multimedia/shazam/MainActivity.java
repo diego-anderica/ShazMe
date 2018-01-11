@@ -127,7 +127,7 @@ public class MainActivity extends AppCompatActivity implements
 
                 //descargarRepositorio("matching");
 
-                AudioFingerprinting.main(cad, storageRef);
+                AudioFingerprinting.main(cad, storageRef, getCtx());
             }
         });
 
@@ -138,7 +138,7 @@ public class MainActivity extends AppCompatActivity implements
             public void onClick(View v) {
                 if (ActivityCompat.checkSelfPermission(getCtx(), Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
                     Toast.makeText(MainActivity.this, "Escuchando nueva canción...", Toast.LENGTH_LONG).show();
-                    AudioFingerprinting.main(cad, storageRef);
+                    AudioFingerprinting.main(cad, storageRef, getCtx());
                 } else {
                     requestAudioPermission();
                 }

@@ -41,10 +41,10 @@ public class AudioRecognizer {
     private FirebaseFirestore db;
 
     // Constructor
-    public AudioRecognizer(StorageReference storageRef) {
+    public AudioRecognizer(StorageReference storageRef, Context ctx) {
 
         // Deserialize the hash table hashMapSongRepository (our song repository)
-        this.hashMapSongRepository = Serialization.fillHashMap(storageRef);
+        this.hashMapSongRepository = Serialization.fillHashMap(storageRef, ctx);
         this.running = true;
     }
 

@@ -2,6 +2,7 @@ package es.uclm.esi.multimedia.serialization;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -21,6 +22,7 @@ import es.uclm.esi.multimedia.fingerprinting.*;
 import es.uclm.esi.multimedia.shazam.R;
 import es.uclm.esi.multimedia.utilities.Song;
 
+import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -63,48 +65,68 @@ public class Serialization {
         }
     }
 
-    public static File retrieveFile(StorageReference storageRef) {
-        File localFile = null;
+    public static void downloadFile(StorageReference storageRef, Context ctx) {
+        File fileNameOnDevice = new File(ctx.getExternalFilesDir(null) + "/" + "hashmap.ser");
 
-        try {
-            localFile = File.createTempFile("hashmap", "ser");
-            storageRef.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception exception) {
-                    return;
-                }
-            });
+        storageRef.getFile(fileNameOnDevice).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                return;
+            }
+        });
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        System.out.println("Archivo: " + localFile.getAbsolutePath());
-        return localFile;
+        System.out.println("Archivo: " + fileNameOnDevice.getAbsolutePath());
+        //return fileNameOnDevice;
 
     }
 
-    public static Map<Long, List<KeyPoint>> fillHashMap(StorageReference storageRef) {
+    public static Map<Long, List<KeyPoint>> fillHashMap(StorageReference storageRef, Context ctx) {
         Map<Long, List<KeyPoint>> hashMap = new HashMap<Long, List<KeyPoint>>();
 
-        File cloudFile = retrieveFile(storageRef);
+        downloadFile(storageRef, ctx);
+        File readFile = new File(ctx.getExternalFilesDir(null), "hashmap.ser");
+        String location = ctx.getExternalFilesDir(null) + "/" + "hashmap.ser";
+
+        FileInputStream fis = null;
+        ObjectInputStream ois = null;
 
         try {
-            InputStream fis = new FileInputStream(cloudFile.getAbsolutePath());
-            ObjectInputStream ois = new ObjectInputStream(fis);
-            hashMap = (Map<Long, List<KeyPoint>>) ois.readObject();
-            ois.close();
-            fis.close();
+            fis = new FileInputStream(location);
+            ois = new ObjectInputStream(fis);
+
+            try {
+                while (true) {
+                    hashMap = (Map<Long, List<KeyPoint>>) ois.readObject();
+                }
+            } catch (EOFException eof) {
+                //EOF reached, do nothing
+            }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
+        } finally {
+            if (ois != null) {
+                try {
+                    ois.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            if (fis != null) {
+                try {
+                    fis.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
 
         System.out.println("Este es el hashmap " + hashMap);
