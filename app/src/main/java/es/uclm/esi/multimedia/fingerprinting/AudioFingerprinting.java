@@ -8,6 +8,8 @@ import android.widget.Toast;
 
 import com.google.firebase.storage.StorageReference;
 
+import static android.os.SystemClock.sleep;
+
 public class AudioFingerprinting {
 
     /**
@@ -27,8 +29,10 @@ public class AudioFingerprinting {
 
                     try {
                         fingerPrintingExample.listening("", true, storageRef, ctx);
+                        Toast.makeText(ctx, "Identificando...", Toast.LENGTH_LONG).show();
+                        sleep(10000);
                         String song = fingerPrintingExample.getBest();
-                        Toast.makeText(ctx, "Song is: " + song, Toast.LENGTH_LONG).show();
+                        Toast.makeText(ctx, "La canción es: " + song, Toast.LENGTH_LONG).show();
                     } catch (MediaCasException e) {
                         e.printStackTrace();
                     }

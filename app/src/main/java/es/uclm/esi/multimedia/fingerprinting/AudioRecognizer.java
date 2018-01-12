@@ -33,7 +33,7 @@ public class AudioRecognizer {
 
     public Context ctx;
 
-    public String bestSongMatch;
+    private String bestSongMatch;
 
     // Constructor
     public AudioRecognizer(StorageReference storageRef, Context ctx) {
@@ -79,7 +79,7 @@ public class AudioRecognizer {
                     double[][] magnitudeSpectrum = Spectrum.compute(audioTimeDomain);
 
                     // Determine the shazam action (add or matching) and perform it
-                    shazamAction(magnitudeSpectrum, songId, isMatching);
+                   shazamAction(magnitudeSpectrum, songId, isMatching);
 
                     // Close stream
                     outStream.close();
@@ -103,6 +103,7 @@ public class AudioRecognizer {
         }
 
         this.running = false;
+
     }
 
     // Determine the shazam action (add or matching a song) and perform it
@@ -216,7 +217,7 @@ public class AudioRecognizer {
     // Method to find the songId with the most frequently/repeated time offset
     private void showBestMatching(Map<String, Map<Integer, Integer>> matchMap) {
 
-        String bestsong = "";
+        //String bestsong = "";
         int bestmatch = 0;
 
         // Iterate over the hash map to compare the counter of all the offset
@@ -236,16 +237,19 @@ public class AudioRecognizer {
 
             if (biggestoffset_of_a_song > bestmatch) {
                 bestmatch = biggestoffset_of_a_song;
-                bestsong = idsong;
+                setBest(idsong);
             }
         }
 
         // Print the songId string which represents the best matching
-        System.out.println("Best song: " + bestsong);
-        this.bestSongMatch = bestsong;
+        System.out.println("Best song: " + getBest());
     }
 
     public String getBest(){
         return this.bestSongMatch;
+    }
+
+    public void setBest(String best){
+        this.bestSongMatch = best;
     }
 }

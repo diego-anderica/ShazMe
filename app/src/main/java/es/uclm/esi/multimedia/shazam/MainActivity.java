@@ -114,9 +114,13 @@ public class MainActivity extends AppCompatActivity implements
 
             @Override
             public void onClick(View v) {
-                if (ActivityCompat.checkSelfPermission(getCtx(), Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getCtx(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&ActivityCompat.checkSelfPermission(getCtx(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.checkSelfPermission(getCtx(), Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED
+                        && ActivityCompat.checkSelfPermission(getCtx(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+                        && ActivityCompat.checkSelfPermission(getCtx(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
                     Toast.makeText(MainActivity.this, "Escuchando canción (10 seg.)...", Toast.LENGTH_LONG).show();
                     AudioFingerprinting.main(cad, storageRef, getCtx());
+
+
                 } else {
                     requestAudioPermission();
                 }
@@ -126,7 +130,9 @@ public class MainActivity extends AppCompatActivity implements
         btnAddCancion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (ActivityCompat.checkSelfPermission(getCtx(), Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.checkSelfPermission(getCtx(), Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED
+                        && ActivityCompat.checkSelfPermission(getCtx(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+                        && ActivityCompat.checkSelfPermission(getCtx(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
                     if (txtNombrecancion.getText().toString().equalsIgnoreCase("")){
                         Toast.makeText(MainActivity.this, "Escribe un título de canción", Toast.LENGTH_LONG).show();
                     }else {
@@ -138,6 +144,8 @@ public class MainActivity extends AppCompatActivity implements
 
                         AudioFingerprinting.main(cad, storageRef, getCtx());
                     }
+                } else {
+                    requestAudioPermission();
                 }
             }
         });
@@ -172,6 +180,8 @@ public class MainActivity extends AppCompatActivity implements
         } else {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
+
+
     }
 
     private void initFirestore() {
