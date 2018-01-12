@@ -2,16 +2,11 @@ package es.uclm.esi.multimedia.fingerprinting;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-//import javax.sound.sampled.LineUnavailableException;
 import android.content.Context;
 import android.media.MediaCasException;
+import android.widget.Toast;
 
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.StorageReference;
-
-/**
- * Created by Ruth on 30/11/2017.
- */
 
 public class AudioFingerprinting {
 
@@ -31,7 +26,9 @@ public class AudioFingerprinting {
                     // For matching we provide an empty string and isMatching=true
 
                     try {
-                        fingerPrintingExample.listening("", true);
+                        fingerPrintingExample.listening("", true, storageRef, ctx);
+                        String song = fingerPrintingExample.getBest();
+                        Toast.makeText(ctx, "Song is: " + song, Toast.LENGTH_LONG).show();
                     } catch (MediaCasException e) {
                         e.printStackTrace();
                     }
@@ -46,7 +43,7 @@ public class AudioFingerprinting {
                     try {
                         AudioRecognizer fingerPrintingExample = new AudioRecognizer(storageRef, ctx);
                         // For adding a song we provide a string with its identifier (i.e., title) and isMatching=false
-                        fingerPrintingExample.listening(songId, false);
+                        fingerPrintingExample.listening(songId, false, storageRef, ctx);
                         exit = true;
                     } catch (MediaCasException ex) {
                         Logger.getLogger(AudioFingerprinting.class.getName()).log(Level.SEVERE, null, ex);

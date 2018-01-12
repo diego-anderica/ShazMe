@@ -1,6 +1,7 @@
 package es.uclm.esi.multimedia.fingerprinting;
 
 import es.uclm.esi.multimedia.serialization.Serialization;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -12,18 +13,10 @@ import java.util.logging.Logger;
 
 import android.content.Context;
 import android.media.AudioFormat;
-//import android.media.AudioFormat.Builder;
 import android.media.AudioRecord;
-//import android.media.AudioTrack;
 import android.media.MediaRecorder;
 import android.media.MediaCasException;
 
-//import javax.sound.sampled.AudioFormat;
-/*import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.DataLine;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.TargetDataLine;*/
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.StorageReference;
 
 import es.uclm.esi.multimedia.utilities.HashingFunctions;
@@ -38,7 +31,9 @@ public class AudioRecognizer {
     // Variable to stop/start the listening loop
     public boolean running;
 
-    private FirebaseFirestore db;
+    public Context ctx;
+
+    public String bestSongMatch;
 
     // Constructor
     public AudioRecognizer(StorageReference storageRef, Context ctx) {
@@ -46,30 +41,15 @@ public class AudioRecognizer {
         // Deserialize the hash table hashMapSongRepository (our song repository)
         this.hashMapSongRepository = Serialization.fillHashMap(storageRef, ctx);
         this.running = true;
+        this.ctx = ctx;
     }
 
     // Method used to acquire audio from the microphone and to add/match a song fragment
-    public void listening(String songid, boolean ismatching) throws MediaCasException {
-
+    public void listening(String songid, boolean ismatching, StorageReference storageRef, Context context) throws MediaCasException {
+        final Context contexto = context;
+        final StorageReference storage = storageRef;
         final String songId = songid;
         final boolean isMatching = ismatching;
-
-        // Fill AudioFormat with the recording we want for settings
-/*        AudioFormat audioFormat = new AudioFormat(AudioParams.sampleRate,
-                AudioParams.sampleSizeInBits, AudioParams.channels,
-                AudioParams.signed, AudioParams.bigEndian);*/
-
-        AudioFormat audioFormat = new AudioFormat.Builder().build();
-
-        // Required to get audio directly from the microphone and process it as an
-        // InputStream (using TargetDataLine) in another thread
-/*        DataLine.Info info = new DataLine.Info(TargetDataLine.class, audioFormat);
-        final TargetDataLine line = (TargetDataLine) AudioSystem.getLine(info);
-        line.open(audioFormat);
-        line.start();*/
-
-        //TODO Tener en cuenta AudioParams.signed y AudioParams.bigendian
-        // ENCODING_PCM_16BIT: 8 bit signed and big endian.
 
         final AudioRecord audiorecorder = new AudioRecord(MediaRecorder.AudioSource.MIC, AudioParams.sampleRate, AudioParams.channels, AudioFormat.ENCODING_PCM_8BIT, AudioParams.bufferSize);
         audiorecorder.startRecording();
@@ -96,7 +76,7 @@ public class AudioRecognizer {
                     byte[] audioTimeDomain = outStream.toByteArray();
 
                     // Compute magnitude spectrum
-                    double [][] magnitudeSpectrum = Spectrum.compute(audioTimeDomain);
+                    double[][] magnitudeSpectrum = Spectrum.compute(audioTimeDomain);
 
                     // Determine the shazam action (add or matching) and perform it
                     shazamAction(magnitudeSpectrum, songId, isMatching);
@@ -105,7 +85,7 @@ public class AudioRecognizer {
                     outStream.close();
 
                     // Serialize again the hashMapSongRepository (our song repository)
-                    Serialization.serializeHashMap(hashMapSongRepository);
+                    Serialization.serializeHashMap(hashMapSongRepository, storage, contexto);
                 } catch (IOException e) {
                     System.err.println("I/O exception " + e);
                     System.exit(-1);
@@ -116,12 +96,12 @@ public class AudioRecognizer {
         // Start listening
         listeningThread.start();
 
-        System.out.println("Press ENTER key to stop listening...");
         try {
-            Thread.sleep(5000);
+            Thread.sleep(10000);
         } catch (Exception ex) {
             Logger.getLogger(AudioRecognizer.class.getName()).log(Level.SEVERE, null, ex);
         }
+
         this.running = false;
     }
 
@@ -129,7 +109,7 @@ public class AudioRecognizer {
     private void shazamAction(double[][] magnitudeSpectrum, String songId, boolean isMatching) {
 
         // Hash table used for matching (Map<songId, Map<offset,count>>)
-        Map<String, Map<Integer,Integer>> matchMap = new HashMap<String, Map<Integer,Integer>>();
+        Map<String, Map<Integer, Integer>> matchMap = new HashMap<String, Map<Integer, Integer>>();
 
         // Iterate over all the chunks/ventanas from the magnitude spectrum
         for (int c = 0; c < magnitudeSpectrum.length; c++) {
@@ -148,7 +128,7 @@ public class AudioRecognizer {
                     List<KeyPoint> listofkeys = new ArrayList<KeyPoint>();
                     listofkeys.add(point);
                     this.hashMapSongRepository.put(hashentry, listofkeys);
-                }else {
+                } else {
                     // Update the list with the new key point
                     List<KeyPoint> songlist = this.hashMapSongRepository.get(hashentry);
                     songlist.add(point);
@@ -163,8 +143,8 @@ public class AudioRecognizer {
                 // Compute the time offset (Math.abs(point.getTimestamp() - c))
 
                 List<KeyPoint> listn = this.hashMapSongRepository.get(hashentry);
-                if(listn != null) {
-                    for(KeyPoint kp : listn) {
+                if (listn != null) {
+                    for (KeyPoint kp : listn) {
                         int time = kp.getTimestamp();
                         String id = kp.getSongId();
                         // Compute the offset
@@ -172,19 +152,19 @@ public class AudioRecognizer {
 
                         // If the song does not exist in the match map then we create an entry for this song
                         // and add the specific offset
-                        if(!matchMap.containsKey(id)) {
+                        if (!matchMap.containsKey(id)) {
                             Map<Integer, Integer> smap = new HashMap<Integer, Integer>();
                             smap.put(offset, 1);
                             matchMap.put(id, smap);
 
                             // If the song already exists in the match map, then we increase the counter for
                             // the specific offset if it is already registered, or we create an entry for it
-                        }else{
+                        } else {
                             Map<Integer, Integer> offsetmap = matchMap.get(id);
 
-                            if(!offsetmap.containsKey(offset)) {
+                            if (!offsetmap.containsKey(offset)) {
                                 offsetmap.put(offset, 1);
-                            }else{
+                            } else {
                                 Integer cont = offsetmap.get(offset);
                                 offsetmap.put(offset, cont + 1);
                             }
@@ -230,11 +210,11 @@ public class AudioRecognizer {
         }
         // Hash function
         return HashingFunctions.hash1(frequencyPoints[0], frequencyPoints[1],
-                frequencyPoints[2],frequencyPoints[3],AudioParams.fuzzFactor);
+                frequencyPoints[2], frequencyPoints[3], AudioParams.fuzzFactor);
     }
 
     // Method to find the songId with the most frequently/repeated time offset
-    private void showBestMatching(Map<String, Map<Integer,Integer>> matchMap) {
+    private void showBestMatching(Map<String, Map<Integer, Integer>> matchMap) {
 
         String bestsong = "";
         int bestmatch = 0;
@@ -245,10 +225,10 @@ public class AudioRecognizer {
             Map<Integer, Integer> offsetmap = entry.getValue();
             int biggestoffset_of_a_song = 0;
 
-            for(Map.Entry<Integer, Integer> entry2 : offsetmap.entrySet()) { // Every offset of the song
+            for (Map.Entry<Integer, Integer> entry2 : offsetmap.entrySet()) { // Every offset of the song
                 int current_cont = entry2.getValue();
 
-                if(current_cont > biggestoffset_of_a_song) {
+                if (current_cont > biggestoffset_of_a_song) {
                     biggestoffset_of_a_song = current_cont;
                 }
 
@@ -262,5 +242,10 @@ public class AudioRecognizer {
 
         // Print the songId string which represents the best matching
         System.out.println("Best song: " + bestsong);
+        this.bestSongMatch = bestsong;
+    }
+
+    public String getBest(){
+        return this.bestSongMatch;
     }
 }

@@ -15,4 +15,5 @@
     <string name="lblAniadir">...o ayuda a aumentar el listado de canciones...</string>
     <string name="lblNombre">Nombre de la canción:</string>
     <string name="lblArtista">Artista:</string>
+    <string name="btnEnviar">Enviar </string>
 </resources>

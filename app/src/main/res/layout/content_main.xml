@@ -69,18 +69,6 @@
         android:textSize="18sp"
         android:textStyle="bold" />
 
-    <TextView
-        android:id="@+id/lblArtista"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignEnd="@+id/lblNombre"
-        android:layout_below="@+id/lblNombre"
-        android:layout_marginTop="22dp"
-        android:text="@string/lblArtista"
-        android:textColor="@android:color/white"
-        android:textSize="18sp"
-        android:textStyle="bold" />
-
     <EditText
         android:id="@+id/txtNombreCancion"
         android:layout_width="wrap_content"
@@ -88,19 +76,9 @@
         android:layout_alignBaseline="@+id/lblNombre"
         android:layout_alignBottom="@+id/lblNombre"
         android:layout_alignParentEnd="true"
-        android:editable="false"
+        android:editable="true"
         android:ems="10"
-        android:textColor="@android:color/white" />
-
-    <EditText
-        android:id="@+id/txtArtista"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/txtNombreCancion"
-        android:layout_below="@+id/txtNombreCancion"
-        android:editable="false"
-        android:ems="10"
-        android:inputType="textPersonName"
+        android:enabled="true"
         android:textColor="@android:color/white" />
 
 </RelativeLayout>

@@ -1,13 +1,11 @@
 package es.uclm.esi.multimedia.shazam;
 
-import android.*;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -18,7 +16,6 @@ import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.TextView;
 import android.widget.Toast;
 import android.support.v4.app.ActivityCompat;
 import android.support.annotation.NonNull;
@@ -26,18 +23,11 @@ import android.support.annotation.NonNull;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStreamWriter;
 
 import es.uclm.esi.multimedia.fingerprinting.AudioFingerprinting;
 
@@ -48,8 +38,6 @@ public class MainActivity extends AppCompatActivity implements
 
     private static final String TAG = "MainActivity";
     public static final String ANONYMOUS = "anonymous";
-    private static final String MESSAGE_URL = "http://friendlychat.firebase.google.com/message/";
-    private static final String LOADING_IMAGE_URL = "https://www.google.com/images/spin-32.gif";
 
     private SharedPreferences mSharedPreferences;
     private String mUsername;
@@ -59,16 +47,10 @@ public class MainActivity extends AppCompatActivity implements
 
     private GoogleApiClient mGoogleApiClient;
 
-    private Button btnMatchingNormal;
     private Button btnAddCancion;
     private ImageButton btnMatching;
 
-    private TextView lblBienvenida;
-    private TextView lblAniadir;
-    private TextView lblNombre;
-    private TextView lblArtista;
     private EditText txtNombrecancion;
-    private EditText txtArtista;
 
     // Access a Cloud Firestore instance from the Activity
     private FirebaseFirestore mFirestore;
@@ -101,10 +83,11 @@ public class MainActivity extends AppCompatActivity implements
         storage = FirebaseStorage.getInstance();
 
         // Create a storage reference from our app to the serialized file
-        storageRef = storage.getReference().child("hashmap.ser");
+        storageRef = storage.getReference();
 
         btnAddCancion = findViewById(R.id.btnAddCancion);
         btnMatching = findViewById(R.id.btnMatching);
+        txtNombrecancion = findViewById(R.id.txtNombreCancion);
 
         if (mFirebaseUser == null) {
             // Not signed in, launch the Sign In activity
@@ -132,10 +115,7 @@ public class MainActivity extends AppCompatActivity implements
             @Override
             public void onClick(View v) {
                 if (ActivityCompat.checkSelfPermission(getCtx(), Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getCtx(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&ActivityCompat.checkSelfPermission(getCtx(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(MainActivity.this, "Escuchando canción...", Toast.LENGTH_LONG).show();
-
-                    //descargarRepositorio("matching");
-
+                    Toast.makeText(MainActivity.this, "Escuchando canción (10 seg.)...", Toast.LENGTH_LONG).show();
                     AudioFingerprinting.main(cad, storageRef, getCtx());
                 } else {
                     requestAudioPermission();
@@ -144,81 +124,23 @@ public class MainActivity extends AppCompatActivity implements
         });
 
         btnAddCancion.setOnClickListener(new View.OnClickListener() {
-            String[] cad = {"-add", "Nueva_cancion"};
-
             @Override
             public void onClick(View v) {
                 if (ActivityCompat.checkSelfPermission(getCtx(), Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(MainActivity.this, "Escuchando nueva canción...", Toast.LENGTH_LONG).show();
-                    AudioFingerprinting.main(cad, storageRef, getCtx());
-                } else {
-                    requestAudioPermission();
+                    if (txtNombrecancion.getText().toString().equalsIgnoreCase("")){
+                        Toast.makeText(MainActivity.this, "Escribe un título de canción", Toast.LENGTH_LONG).show();
+                    }else {
+                        String[] cad = {"-add", txtNombrecancion.getText().toString()};
+
+                        Toast.makeText(MainActivity.this, "Escuchando nueva canción (10 seg.)...", Toast.LENGTH_LONG).show();
+
+                        txtNombrecancion.setText("");
+
+                        AudioFingerprinting.main(cad, storageRef, getCtx());
+                    }
                 }
             }
         });
-
-    }
-
-
-
-    /*private void descargarRepositorio(String method) {
-
-        Context ctx = getCtx();
-
-        if(method.equals("matching") && isExternalStorageReadable()){
-            try{
-                File ruta_sd = getCtx().getExternalFilesDir(null);
-                File f = new File(ruta_sd.getAbsolutePath(), "hashmap.ser");
-
-                OutputStreamWriter fout = new OutputStreamWriter(new FileOutputStream(f));
-
-                FileOutputStream fos = new FileOutputStream(f);
-
-                fout.write("Texto de prueba.");
-                fout.close();
-            }catch (Exception ex){
-                Log.e("Ficheros", "Error al escribir fichero a tarjeta SD");
-            }
-        }*/
-/*
-        File rootPath = new File(Environment.getExternalStorageDirectory(), "hashmap.ser");
-
-        if(!rootPath.exists()) {
-            rootPath.mkdirs();
-        }
-
-        final File localFile = new File(rootPath,"hashmap.ser");
-
-        storageRef.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-                Log.e("firebase ",";local tem file created  created " +localFile.toString());
-                //  updateDb(timestamp,localFile.toString(),position);
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                Log.e("firebase ",";local tem file not created  created " +exception.toString());
-            }
-        });
-    }*/
-
-    /* Checks if external storage is available to at least read */
-    public boolean isExternalStorageReadable() {
-        String state = Environment.getExternalStorageState();
-        if (Environment.MEDIA_MOUNTED.equals(state) ||
-                Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
-            return true;
-        }
-        return false;
-    }
-
-    public boolean isExternalStorageWritable() {
-        String state = Environment.getExternalStorageState();
-        if (Environment.MEDIA_MOUNTED.equals(state)) {
-            return true;
-        }
-        return false;
     }
 
     public void requestAudioPermission(){

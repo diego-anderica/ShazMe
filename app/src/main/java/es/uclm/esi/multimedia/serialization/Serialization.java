@@ -1,26 +1,16 @@
 package es.uclm.esi.multimedia.serialization;
 
 import android.content.Context;
-import android.content.res.Resources;
-import android.os.Environment;
+import android.net.Uri;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import es.uclm.esi.multimedia.fingerprinting.*;
-import es.uclm.esi.multimedia.shazam.R;
-import es.uclm.esi.multimedia.utilities.Song;
 
 import java.io.EOFException;
 import java.io.File;
@@ -28,7 +18,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
@@ -36,55 +25,62 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static android.content.ContentValues.TAG;
-
-
-/**
- * Created by Ruth on 30/11/2017.
- */
-
 public class Serialization {
 
     // The serialized <songId,keypoints> hash table is inside the "serialized"
     // directory in a file called "hashmap.ser"
-    public static void serializeHashMap(Map<Long, List<KeyPoint>> hashMap) {
+    public static void serializeHashMap(Map<Long, List<KeyPoint>> hashMap, StorageReference storageRef, Context ctx) {
+        String filePath = ctx.getFilesDir().getPath().toString() + "/hashmap2.ser";
+        File f;
 
         try {
-            File f = new File("res/raw");
-            if (!f.exists()) {
-                f.mkdir();
-            }
-            f = new File("raw/hashmap.ser");
+            f = new File(filePath);
             OutputStream fos = new FileOutputStream(f);
             ObjectOutputStream oos = new ObjectOutputStream(fos);
             oos.writeObject(hashMap);
             oos.close();
             fos.close();
+
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            Uri fileHash = Uri.fromFile(f);
+            storageRef.child("hashmap2.ser").putFile(fileHash).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+
+                }
+            });
+
         } catch (IOException ex) {
             System.out.println("Input/output error " + ex);
         }
     }
 
     public static void downloadFile(StorageReference storageRef, Context ctx) {
-        for (int i = 0; i < 1; i++){
-            File fileNameOnDevice = new File(ctx.getExternalFilesDir(null) + "/" + "hashmap.ser");
+        File fileNameOnDevice = new File(ctx.getExternalFilesDir(null) + "/" + "hashmap2.ser");
 
-            storageRef.getFile(fileNameOnDevice).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+        storageRef.child("hashmap2.ser").getFile(fileNameOnDevice).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
 
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception exception) {
-                    return;
-                }
-            });
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                return;
+            }
+        });
 
-
-            System.out.println("Archivo: " + fileNameOnDevice.getAbsolutePath());
-            //return fileNameOnDevice;
-        }
+        System.out.println("Archivo: " + fileNameOnDevice.getAbsolutePath());
     }
 
     public static Map<Long, List<KeyPoint>> fillHashMap(StorageReference storageRef, Context ctx) {
@@ -98,7 +94,7 @@ public class Serialization {
             e.printStackTrace();
         }
 
-        String location = ctx.getExternalFilesDir(null) + "/" + "hashmap.ser";
+        String location = ctx.getExternalFilesDir(null) + "/" + "hashmap2.ser";
 
         FileInputStream fis = null;
         ObjectInputStream ois = null;
@@ -110,10 +106,9 @@ public class Serialization {
             try {
                 while (true) {
                     hashMap = (Map<Long, List<KeyPoint>>) ois.readObject();
-                    System.out.println("Este es el hashmap " + hashMap.toString());
                 }
             } catch (EOFException eof) {
-                System.out.println("End of file exception");
+                System.out.println("End of file exception.");
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -138,9 +133,6 @@ public class Serialization {
                 }
             }
         }
-
-        //System.out.println("Este es el hashmap " + hashMap.toString());
-
         return hashMap;
     }
 }
